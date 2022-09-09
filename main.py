@@ -11,19 +11,23 @@ INTERVAL = int(7200 / TIME_WINDOW)
 driver = uc.Chrome()
 driver.maximize_window()
 
+link = "https://www.bet365.com/#/IP/B1"
+link = r"file:///home/agus/Desktop/bet365%20-%20Apuestas%20deportivas%20en%20la%20red.html"
+driver.get(link)
 
-def get_bet365():
-    link = "https://www.bet365.com/#/IP/B1"
-    link = r"file:///home/agus/Desktop/bet365%20-%20Apuestas%20deportivas%20en%20la%20red.html"
-    driver.get(link)
-    sleep(3)
+def delete_sign_in_msg():
     try:
         startup_message = driver.find_element(
             By.CLASS_NAME, "iip-IntroductoryPopup_Cross"
         )
         startup_message.click()
     except Exception:
-        print("No sign-in message")
+        print("No sign-in message") 
+
+def get_bet365():
+
+    sleep(3)
+    delete_sign_in_msg()
 
     for _ in range(INTERVAL):
         # Find all boxes that contain a match info
