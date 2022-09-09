@@ -1,96 +1,15 @@
 from selenium.webdriver.common.by import By
 import undetected_chromedriver.v2 as uc
-from avro.io import DatumWriter
-import avro
-import io
-import json
-from google.api_core.exceptions import NotFound
-from google.cloud.pubsub import PublisherClient
-from google.pubsub_v1.types import Encoding
-import datetime
 from time import sleep
+from extract import assert_data, extract_data
+from pubsub import publish
 
-
-project_id = "marine-bison-360321"
-topic_id = "match_bets"
-avsc_file = "schema_avro.json"
 
 TEAM = "strongest"
 TIME_WINDOW = 11  # Seconds
 INTERVAL = int(7200 / TIME_WINDOW)
-ERRORS = 0
-MAX_ERRORS = 4
 driver = uc.Chrome()
 driver.maximize_window()
-
-
-def publish(record):
-    publisher_client = PublisherClient()
-    topic_path = publisher_client.topic_path(project_id, topic_id)
-
-    # Prepare to write Avro records to the binary output stream.
-    avro_schema = avro.schema.parse(open(avsc_file, "rb").read())
-    writer = DatumWriter(avro_schema)
-    bout = io.BytesIO()
-
-    try:
-        # Get the topic encoding type.
-        topic = publisher_client.get_topic(request={"topic": topic_path})
-        encoding = topic.schema_settings.encoding
-
-        # Encode the data
-        if encoding == Encoding.JSON:
-            data_str = json.dumps(record)
-            print(f"Preparing a JSON-encoded message:\n{data_str}")
-            data = data_str.encode("utf-8")
-        else:
-            print(f"No encoding specified in {topic_path}. Abort.")
-            exit(0)
-
-        future = publisher_client.publish(topic_path, data)
-        print(f"Published message ID: {future.result()}")
-
-    except NotFound:
-        print(f"{topic_id} not found.")
-
-
-def _assert_data(data):
-    # Check if scraped values are correct
-    for i in range(-5, 0, 1):
-        number = data[i].split(".")
-        if not number[0].isnumeric():
-            return False
-
-    return True
-
-
-def assert_data(data):
-    global ERRORS
-    if not _assert_data(data):
-        ERRORS += 1
-        print(f"Number of errors: {ERRORS}")
-        if ERRORS >= MAX_ERRORS:
-            print(f"Scraping failed {MAX_ERRORS} times...")
-            exit(0)
-        else:
-            return False
-
-    ERRORS = 0
-    return True
-
-
-def extract_data(data):
-    results = {}
-    results["team1"] = data[0]
-    results["team2"] = data[1]
-    results["time"] = data[2]
-    results["team1_score"] = int(data[-5])
-    results["team2_score"] = int(data[-4])
-    results["team1_odds"] = float(data[-3])
-    results["draw_odds"] = float(data[-2])
-    results["team2_odds"] = float(data[-1])
-    results["datetime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return results
 
 
 def get_bet365():

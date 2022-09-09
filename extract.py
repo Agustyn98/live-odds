@@ -1,3 +1,7 @@
+import datetime
+
+ERRORS = 0
+MAX_ERRORS = 4
 
 def _assert_data(data):
     # Check if scraped values are correct
