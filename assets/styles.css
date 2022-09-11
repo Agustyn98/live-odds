@@ -1,13 +1,19 @@
 circle {
-    stroke-width: 27px;
+    stroke-width: 22px;
 }
 
-text{
-    font-size: large !important;
+text {
+    font-size: larger !important;
 }
 
+label {
+    font-size:x-large !important;
+}
+
+/*
 @media (max-width: 479px) {
-    #asd{
-        width: 40px;
+    .sc-iwsKbI{
+        width: 10% !important;
     }
 }
+*/
