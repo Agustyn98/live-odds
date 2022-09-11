@@ -1,0 +1,13 @@
+circle {
+    stroke-width: 27px;
+}
+
+text{
+    font-size: large !important;
+}
+
+@media (max-width: 479px) {
+    #asd{
+        width: 40px;
+    }
+}

@@ -2,3 +2,6 @@ selenium
 undetected_chromedriver
 google-cloud-pubsub
 avro
+dash
+dash-daq
+dash-bootstrap-templates
