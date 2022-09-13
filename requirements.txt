@@ -1,7 +1,9 @@
 selenium
 undetected_chromedriver
 google-cloud-pubsub
+google-cloud-bigquery
 avro
 dash
 dash-daq
 dash-bootstrap-templates
+db-dtypes

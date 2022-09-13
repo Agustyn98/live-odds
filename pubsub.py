@@ -8,7 +8,7 @@ from google.pubsub_v1.types import Encoding
 
 
 project_id = "marine-bison-360321"
-topic_id = "match_bets"
+topic_id = "match_bets2"
 avsc_file = "schema_avro.json"
 
 def publish(record):

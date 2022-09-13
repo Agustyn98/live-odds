@@ -1,15 +1,56 @@
 # Run this app with `python app.py` and
 # visit http://127.0.0.1:8050/ in your web browser.
 
+from time import sleep
 from dash import Dash, html, dcc
 import plotly.express as px
 import dash_daq as daq
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
-
+from datetime import datetime, timedelta
 
 import pandas as pd
+from google.cloud import bigquery
+
+import os
+
+TEAM1 = os.environ["TEAM1"]
+TEAM2 = os.environ["TEAM2"]
+project_id = "marine-bison-360321"
+#TEAM1 = "almer"
+#TEAM2 = "osasuna"
+
+client = bigquery.Client()
+
+yesterday = (datetime.now() - timedelta(1)).strftime('%Y%m%d')
+sql = f"""
+    SELECT team1, team2, time, team1_score, team2_score, team1_odds, draw_odds, team2_odds FROM
+    (
+    SELECT team1, team2,
+    time,
+    ROW_NUMBER() OVER(partition by time) as r, 
+    team1_score, team2_score,
+    team1_odds * 100 / total as team1_odds, 
+    draw_odds * 100 / total as draw_odds, 
+    team2_odds * 100 / total as team2_odds,
+    FROM (
+      SELECT team1, team2, time, team1_score, team2_score,
+      (1 / team1_odds  ) as team1_odds,
+      (1 / draw_odds )  as draw_odds,
+      (1 / team2_odds  )  as team2_odds,
+      (1 / team1_odds + 1 / draw_odds + 1 / team2_odds) as total,
+      datetime
+      FROM `marine-bison-360321.betting_dataset.match_bets2`
+      WHERE 
+      LOWER(team1) LIKE "%{TEAM1}%"
+      AND LOWER(team2) LIKE "%{TEAM2}%"
+      AND datetime >= {yesterday}
+      )
+    ) 
+    WHERE r = 1 
+    ORDER BY time
+"""
 
 app = Dash(
     __name__,
@@ -24,7 +65,27 @@ templates = [
 load_figure_template(templates)
 
 
-df = pd.read_csv("../data.csv")
+
+def get_data():
+    df = client.query(sql, project=project_id).to_dataframe()
+    i = 0
+    while len(df) <= 0:
+        if i >= 3:
+            quit("No data returned from query")
+        i += 1
+        print('No data, retrying in 5 seconds...')
+        sleep(5)
+        df = client.query(sql, project=project_id).to_dataframe()
+    
+    return df
+
+
+df = get_data()
+
+
+#df = pd.read_csv("../data.csv")
+#print(df)
+
 
 TEAM1 = df["team1"].iloc[-1]
 TEAM2 = df["team2"].iloc[-1]
@@ -32,8 +93,6 @@ SCORE1 = df["team1_score"].iloc[-1]
 SCORE2 = df["team2_score"].iloc[-1]
 ODDS1 = df["team1_odds"].iloc[-1]
 
-
-print(df.to_string())
 
 fig = px.bar(
     df,
@@ -85,14 +144,14 @@ app.layout = html.Div(
             figure=fig,
             style={
                 "text-align": "center",
-                "padding-right": "6vw",
-                "padding-left": "6vw",
+                "padding-right": "4vw",
+                "padding-left": "4vw",
                 "padding-bottom": "3vw",
             },
         ),
         dcc.Interval(
             id="interval-component",
-            interval=5 * 1000,
+            interval= 65 * 1000,
             n_intervals=0,
         ),
     ]
@@ -107,13 +166,15 @@ app.layout = html.Div(
     Input("interval-component", "n_intervals"),
 )
 def update_metrics(n=0):
-    df = pd.read_csv("../data.csv")
+    #df = pd.read_csv("../data.csv")
+    df = client.query(sql, project=project_id).to_dataframe()
     TEAM1 = df["team1"].iloc[-1]
     TEAM2 = df["team2"].iloc[-1]
     ODDS1 = df["team1_odds"].iloc[-1]
     ODDS_DRAW = df["draw_odds"].iloc[-1]
     ODDS2 = df["team2_odds"].iloc[-1]
-    print(df.to_string())
+    #print(df.to_string())
+
     fig = px.bar(
         df,
         x="time",
@@ -145,17 +206,21 @@ def update_metrics(n=0):
         chance = 50 + (ODDS2 / 3 - ODDS1 / 3) * 1.2
         label_text = f"Toss-up/Draw"
 
-
     return fig, chance, label_text, children
 
 
-if __name__ == "__main__":
+def run():
     app.run_server(debug=True, host="0.0.0.0")
+
+if __name__ == "__main__":
+    run()
 
 
 # TODO:
-# Make gauge mobile friendly, or not
-# create bq view
-# replace csv with bigquery view
-# Test scaling of gauge with real matches
+# Authenticate without the service key
+# Test from start to end
+
 # handle match-end, betting ending, etc
+# reformat visualizations code
+# documentation
+# Document views of reddit project

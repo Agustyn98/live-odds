@@ -36,8 +36,7 @@
     },
     {
       "name": "datetime",
-      "type": "string"
+      "type": "int"
     }
   ]
 }
-

@@ -1,7 +1,7 @@
 import datetime
 
 ERRORS = 0
-MAX_ERRORS = 4
+MAX_ERRORS = 5
 
 def _assert_data(data):
     # Check if scraped values are correct
@@ -9,6 +9,9 @@ def _assert_data(data):
         number = data[i].split(".")
         if not number[0].isnumeric():
             return False
+
+    if len(data[2].split(':')) < 2:
+        return False
 
     return True
 
@@ -38,5 +41,6 @@ def extract_data(data):
     results["team1_odds"] = float(data[-3])
     results["draw_odds"] = float(data[-2])
     results["team2_odds"] = float(data[-1])
-    results["datetime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    #results["datetime"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    results["datetime"] = int(datetime.datetime.now().strftime("%Y%m%d"))
     return results
