@@ -18,12 +18,12 @@ import os
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
 project_id = "marine-bison-360321"
-#TEAM1 = "almer"
-#TEAM2 = "osasuna"
+# TEAM1 = "almer"
+# TEAM2 = "osasuna"
 
 client = bigquery.Client()
 
-yesterday = (datetime.now() - timedelta(1)).strftime('%Y%m%d')
+yesterday = (datetime.now() - timedelta(1)).strftime("%Y%m%d")
 sql = f"""
     SELECT team1, team2, time, team1_score, team2_score, team1_odds, draw_odds, team2_odds FROM
     (
@@ -59,11 +59,8 @@ app = Dash(
     external_stylesheets=[dbc.themes.DARKLY],
 )
 
-templates = [
-    "darkly",
-]
+templates = ["darkly"]
 load_figure_template(templates)
-
 
 
 def get_data():
@@ -71,21 +68,17 @@ def get_data():
     i = 0
     while len(df) <= 0:
         if i >= 3:
-            quit("No data returned from query")
+            quit("ERROR: No data returned from query.")
         i += 1
-        print('No data, retrying in 5 seconds...')
+        print("No data return from query, retrying in 5 seconds...")
         sleep(5)
         df = client.query(sql, project=project_id).to_dataframe()
-    
+
     return df
 
 
 df = get_data()
-
-
-#df = pd.read_csv("../data.csv")
-#print(df)
-
+print(df)
 
 TEAM1 = df["team1"].iloc[-1]
 TEAM2 = df["team2"].iloc[-1]
@@ -151,7 +144,7 @@ app.layout = html.Div(
         ),
         dcc.Interval(
             id="interval-component",
-            interval= 65 * 1000,
+            interval=65 * 1000,
             n_intervals=0,
         ),
     ]
@@ -166,14 +159,14 @@ app.layout = html.Div(
     Input("interval-component", "n_intervals"),
 )
 def update_metrics(n=0):
-    #df = pd.read_csv("../data.csv")
+    # df = pd.read_csv("../data.csv")
     df = client.query(sql, project=project_id).to_dataframe()
     TEAM1 = df["team1"].iloc[-1]
     TEAM2 = df["team2"].iloc[-1]
     ODDS1 = df["team1_odds"].iloc[-1]
     ODDS_DRAW = df["draw_odds"].iloc[-1]
     ODDS2 = df["team2_odds"].iloc[-1]
-    #print(df.to_string())
+    # print(df.to_string())
 
     fig = px.bar(
         df,
@@ -211,6 +204,7 @@ def update_metrics(n=0):
 
 def run():
     app.run_server(debug=True, host="0.0.0.0")
+
 
 if __name__ == "__main__":
     run()
