@@ -2,7 +2,7 @@ import datetime
 from glob import glob
 
 ERRORS = 0
-MAX_ERRORS = 5
+MAX_ERRORS = 8
 FIRST_HALF = False
 SECOND_HALF = False
 
@@ -41,7 +41,7 @@ def extract_time(time1, time2):
     if "ET" in time1 or "TE" in time1:
         return time2
 
-    if time1 >= 90:
+    if time1 >= "90":
         extra_time = time1.split(':')
         extra_m = int(extra_time[0]) - 90
         extra_s = extra_time[1]

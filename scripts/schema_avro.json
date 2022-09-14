@@ -1,0 +1,42 @@
+{
+  "type" : "record",
+  "name" : "Avro",
+  "fields" : [
+    {
+      "name" : "team1",
+      "type" : "string"
+    },
+    {
+      "name" : "team2",
+      "type" : "string"
+    },
+    {
+      "name" : "time",
+      "type" : "string"
+    },
+    {
+      "name" : "team1_score",
+      "type" : "int"
+    },
+    {
+      "name" : "team2_score",
+      "type" : "int"
+    },
+    {
+      "name" : "team1_odds",
+      "type" : "float"
+    },
+    {
+      "name" : "draw_odds",
+      "type" : "float"
+    },
+    {
+      "name" : "team2_odds",
+      "type" : "float"
+    },
+    {
+      "name": "datetime",
+      "type": "int"
+    }
+  ]
+}
