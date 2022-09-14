@@ -18,6 +18,8 @@ import os
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
 project_id = "marine-bison-360321"
+os.environ["GCLOUD_PROJECT"] = project_id
+
 # TEAM1 = "almer"
 # TEAM2 = "osasuna"
 

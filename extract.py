@@ -1,7 +1,10 @@
 import datetime
+from glob import glob
 
 ERRORS = 0
 MAX_ERRORS = 5
+FIRST_HALF = False
+SECOND_HALF = False
 
 def _assert_data(data):
     # Check if scraped values are correct
@@ -10,7 +13,7 @@ def _assert_data(data):
         if not number[0].isnumeric():
             return False
 
-    if len(data[2].split(':')) < 2:
+    if "TE" not in data[2] and "ET" not in data[2] and len(data[2].split(':')) < 2:
         return False
 
     return True
@@ -31,11 +34,38 @@ def assert_data(data):
     return True
 
 
+def extract_time(time1, time2):
+    global FIRST_HALF
+    global SECOND_HALF
+
+    if "ET" in time1 or "TE" in time1:
+        return time2
+
+    if time1 >= 90:
+        extra_time = time1.split(':')
+        extra_m = int(extra_time[0]) - 90
+        extra_s = extra_time[1]
+        return f"90:00+{str(extra_m)}:{extra_s}"
+    
+    if time1 == "45:00" and FIRST_HALF:
+        SECOND_HALF = True
+        return "45:00HT"
+
+    if time1 >= "45:00" and not SECOND_HALF:
+        FIRST_HALF = True
+        extra_time = time1.split(':')
+        extra_m = int(extra_time[0]) - 45
+        extra_s = extra_time[1]
+        return f"45:00+{str(extra_m)}:{extra_s}"
+    
+    return time1
+
+
 def extract_data(data):
     results = {}
     results["team1"] = data[0]
     results["team2"] = data[1]
-    results["time"] = data[2]
+    results["time"] = extract_time(data[2], data[3])
     results["team1_score"] = int(data[-5])
     results["team2_score"] = int(data[-4])
     results["team1_odds"] = float(data[-3])

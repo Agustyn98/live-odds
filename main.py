@@ -11,7 +11,7 @@ import os
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
 
-TIME_WINDOW = 55  # Seconds
+TIME_WINDOW = 11  # Seconds
 INTERVAL = int(7200 / TIME_WINDOW)
 driver = uc.Chrome()
 #driver.maximize_window()
@@ -34,8 +34,10 @@ def get_bet365():
     sleep(3)
     delete_sign_in_msg()
 
-    for _ in range(INTERVAL):
+    for i, _ in enumerate(range(INTERVAL)):
         # Find all boxes that contain a match info
+        driver.refresh()
+        sleep(5)
         match_rectangle = driver.find_elements(By.CLASS_NAME, "ovm-Fixture_Container")
         for e in match_rectangle:
             if TEAM1.lower() in e.text.lower() and TEAM2.lower() in e.text.lower():
@@ -47,7 +49,7 @@ def get_bet365():
                     break
 
                 data = extract_data(raw_data)
-                publish(data)
+                #publish(data)
                 print(f"PUBLISHING DATA \n{data}")
                 sleep(TIME_WINDOW)
                 break
