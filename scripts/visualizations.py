@@ -48,7 +48,7 @@ sql = f"""
 
 app = Dash(
     __name__,
-    assets_folder="assets",
+    assets_folder="../assets",
     include_assets_files=True,
     external_stylesheets=[dbc.themes.DARKLY],
 )
