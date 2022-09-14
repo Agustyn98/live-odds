@@ -16,7 +16,6 @@ INTERVAL = int(7200 / TIME_WINDOW)
 driver = uc.Chrome()
 
 link = "https://www.bet365.com/#/IP/B1"
-#link = r"file:///home/agus/Desktop/bet365%20-%20Apuestas%20deportivas%20en%20la%20red.html"
 driver.get(link)
 
 def delete_sign_in_msg():
@@ -48,7 +47,7 @@ def get_bet365():
                     break
 
                 data = extract_data(raw_data)
-                #publish(data)
+                publish(data)
                 print(f"PUBLISHING DATA \n{data}")
                 sleep(TIME_WINDOW)
                 break

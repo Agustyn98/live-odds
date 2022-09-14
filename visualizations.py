@@ -71,8 +71,7 @@ def get_data():
     return df
 
 
-#df = get_data()
-df = pd.read_csv('../data.csv')
+df = get_data()
 print(df)
 
 TEAM1 = df["team1"].iloc[-1]
