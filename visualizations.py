@@ -1,6 +1,3 @@
-# Run this app with `python app.py` and
-# visit http://127.0.0.1:8050/ in your web browser.
-
 from time import sleep
 from dash import Dash, html, dcc
 import plotly.express as px
@@ -9,19 +6,14 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
 from datetime import datetime, timedelta
-
 import pandas as pd
 from google.cloud import bigquery
-
 import os
 
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
 project_id = "marine-bison-360321"
 os.environ["GCLOUD_PROJECT"] = project_id
-
-# TEAM1 = "almer"
-# TEAM2 = "osasuna"
 
 client = bigquery.Client()
 
@@ -79,7 +71,8 @@ def get_data():
     return df
 
 
-df = get_data()
+#df = get_data()
+df = pd.read_csv('../data.csv')
 print(df)
 
 TEAM1 = df["team1"].iloc[-1]
@@ -98,7 +91,6 @@ fig = px.bar(
 
 gauge = daq.Gauge(
     id="gauge",
-    # scale={'start': 0, 'interval': 20, 'labelInterval': 1},
     scale={
         "custom": {
             10: {"style": {"fill": "tomato"}, "label": "Likely"},
@@ -204,19 +196,5 @@ def update_metrics(n=0):
     return fig, chance, label_text, children
 
 
-def run():
-    app.run_server(debug=True, host="0.0.0.0")
-
-
 if __name__ == "__main__":
-    run()
-
-
-# TODO:
-# Authenticate without the service key
-# Test from start to end
-
-# handle match-end, betting ending, etc
-# reformat visualizations code
-# documentation
-# Document views of reddit project
+    app.run_server(debug=True, host="0.0.0.0")

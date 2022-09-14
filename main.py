@@ -14,7 +14,6 @@ TEAM2 = os.environ["TEAM2"]
 TIME_WINDOW = 11  # Seconds
 INTERVAL = int(7200 / TIME_WINDOW)
 driver = uc.Chrome()
-#driver.maximize_window()
 
 link = "https://www.bet365.com/#/IP/B1"
 #link = r"file:///home/agus/Desktop/bet365%20-%20Apuestas%20deportivas%20en%20la%20red.html"
