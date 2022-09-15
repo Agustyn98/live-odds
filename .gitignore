@@ -4,6 +4,6 @@ lib*
 pyvenv.cfg
 __pycache__/
 etc/
-first_figure.html
 share/
 orchestrate.py
+cache-directory

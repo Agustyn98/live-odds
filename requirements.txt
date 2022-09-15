@@ -7,3 +7,4 @@ dash
 dash-daq
 dash-bootstrap-templates
 db-dtypes
+Flask-Caching

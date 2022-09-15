@@ -9,6 +9,21 @@ from datetime import datetime, timedelta
 import pandas as pd
 from google.cloud import bigquery
 import os
+from flask_caching import Cache
+
+app = Dash(
+    __name__,
+    assets_folder="../assets",
+    include_assets_files=True,
+    external_stylesheets=[dbc.themes.DARKLY],
+)
+
+cache = Cache(app.server, config={
+    'CACHE_TYPE': 'filesystem',
+    'CACHE_DIR': 'cache-directory',
+})
+
+TIMEOUT = 30
 
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
@@ -46,18 +61,13 @@ sql = f"""
     ORDER BY time
 """
 
-app = Dash(
-    __name__,
-    assets_folder="../assets",
-    include_assets_files=True,
-    external_stylesheets=[dbc.themes.DARKLY],
-)
-
 templates = ["darkly"]
 load_figure_template(templates)
 
-
+@cache.memoize(timeout=TIMEOUT)
 def get_data():
+    print('RUNNING \nEXPENSIVE QUERY !\n VERY expensive ---------\n-----------------\n-------------\n-----------')
+    print('EXPENSIVE QUERYY -------------------------------------')
     df = client.query(sql, project=project_id).to_dataframe()
     i = 0
     while len(df) <= 0:
@@ -137,7 +147,7 @@ app.layout = html.Div(
         ),
         dcc.Interval(
             id="interval-component",
-            interval=65 * 1000,
+            interval=50 * 1000,
             n_intervals=0,
         ),
     ]
@@ -153,7 +163,9 @@ app.layout = html.Div(
 )
 def update_metrics(n=0):
     # df = pd.read_csv("../data.csv")
-    df = client.query(sql, project=project_id).to_dataframe()
+    #df = client.query(sql, project=project_id).to_dataframe()
+    df = get_data()
+    print(f'DATA:\n{df}')
     TEAM1 = df["team1"].iloc[-1]
     TEAM2 = df["team2"].iloc[-1]
     ODDS1 = df["team1_odds"].iloc[-1]
