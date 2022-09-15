@@ -23,7 +23,7 @@ cache = Cache(app.server, config={
     'CACHE_DIR': 'cache-directory',
 })
 
-TIMEOUT = 30
+TIMEOUT = 49
 
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
@@ -66,8 +66,7 @@ load_figure_template(templates)
 
 @cache.memoize(timeout=TIMEOUT)
 def get_data():
-    print('RUNNING \nEXPENSIVE QUERY !\n VERY expensive ---------\n-----------------\n-------------\n-----------')
-    print('EXPENSIVE QUERYY -------------------------------------')
+    print('RUNNING EXPENSIVE QUERY !\n')
     df = client.query(sql, project=project_id).to_dataframe()
     i = 0
     while len(df) <= 0:

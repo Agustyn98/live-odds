@@ -32,7 +32,7 @@ def get_bet365():
     for i, _ in enumerate(range(INTERVAL)):
         # Find all boxes that contain a match info
         driver.refresh()
-        sleep(4)
+        sleep(5)
         match_rectangle = driver.find_elements(By.CLASS_NAME, "ovm-Fixture_Container")
         for e in match_rectangle:
             if TEAM1.lower() in e.text.lower() and TEAM2.lower() in e.text.lower():
