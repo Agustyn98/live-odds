@@ -17,7 +17,7 @@ The goal of this project is to show live prediction based on betting odds from t
 
 ## Pipeline
 
-![architecture](https://user-images.githubusercontent.com/66125885/190246413-ce2cfa0e-b479-40d3-b739-a1d21bd88540.png)
+![download](https://user-images.githubusercontent.com/66125885/190826735-e5c9c31b-4aaa-4a1e-b01f-772d4b759c4c.jpeg)
 
 1. Match data is scraped with selenium, using the [undetected  chromedriver]("https://github.com/ultrafunkamsterdam/undetected-chromedriver") to avoid CloudFlare's restrictions
 2. Data is pushed to a pub/sub topic, this has a few advantages:
