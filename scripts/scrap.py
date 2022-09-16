@@ -8,7 +8,7 @@ import os
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
 
-TIME_WINDOW = 50  # Seconds
+TIME_WINDOW = 82  # Seconds
 INTERVAL = int(7200 / TIME_WINDOW)
 driver = uc.Chrome()
 

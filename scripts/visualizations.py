@@ -23,7 +23,7 @@ cache = Cache(app.server, config={
     'CACHE_DIR': 'cache-directory',
 })
 
-TIMEOUT = 49
+TIMEOUT = 68
 
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
@@ -79,8 +79,8 @@ def get_data():
 
     return df
 
-
-df = get_data()
+df = pd.read_csv("../../data.csv")
+#df = get_data()
 print(df)
 
 TEAM1 = df["team1"].iloc[-1]
@@ -114,7 +114,8 @@ gauge = daq.Gauge(
     },
     value=ODDS1,
     label="",
-    size=500,
+    labelPosition="bottom",
+    size=600,
     max=100,
     min=0,
 )
@@ -125,28 +126,28 @@ app.layout = html.Div(
         html.H1(
             id="score",
             children=f"{TEAM1} {SCORE1} - {SCORE2} {TEAM2}",
-            style={"text-align": "center", "padding-top": "2vh"},
+            style={"text-align": "center", "padding-top": "1vh"},
         ),
         html.H3(
             "Live result forecast based on betting odds",
-            style={"text-align": "center", "padding": "1vw", "padding-bottom": "6vh"},
+            style={"text-align": "center", "padding": "1vw", "padding-bottom": "2vh"},
             id="descriptioin",
         ),
         gauge,
-        html.H4("Timeline:", style={"text-align": "center", "padding-top": "4vh"}),
+        html.H4("Timeline:", style={"text-align": "center", "padding-top": "0vh"}),
         dcc.Graph(
             id="example-graph",
             figure=fig,
             style={
                 "text-align": "center",
-                "padding-right": "4vw",
-                "padding-left": "4vw",
-                "padding-bottom": "3vw",
+                "padding-right": "3vw",
+                "padding-left": "3vw",
+                "padding-bottom": "2vw",
             },
         ),
         dcc.Interval(
             id="interval-component",
-            interval=50 * 1000,
+            interval=70 * 1000,
             n_intervals=0,
         ),
     ]
@@ -161,9 +162,8 @@ app.layout = html.Div(
     Input("interval-component", "n_intervals"),
 )
 def update_metrics(n=0):
-    # df = pd.read_csv("../data.csv")
-    #df = client.query(sql, project=project_id).to_dataframe()
-    df = get_data()
+    df = pd.read_csv("../../data.csv")
+    #df = get_data()
     print(f'DATA:\n{df}')
     TEAM1 = df["team1"].iloc[-1]
     TEAM2 = df["team2"].iloc[-1]
@@ -208,4 +208,4 @@ def update_metrics(n=0):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=False, host="0.0.0.0")
+    app.run_server(debug=True, host="0.0.0.0")

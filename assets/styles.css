@@ -1,5 +1,5 @@
 circle {
-    stroke-width: 22px;
+    stroke-width: 25px;
 }
 
 text {
@@ -8,4 +8,9 @@ text {
 
 label {
     font-size:x-large !important;
+}
+
+.needle {
+    stroke: rgb(123, 123, 123) !important;
+    stroke-width: 10 !important;
 }
