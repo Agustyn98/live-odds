@@ -129,11 +129,11 @@ app.layout = html.Div(
         ),
         html.H3(
             "Live result forecast based on betting odds",
-            style={"text-align": "center", "padding": "1vw", "padding-bottom": "8vh"},
+            style={"text-align": "center", "padding": "1vw", "padding-bottom": "6vh"},
             id="descriptioin",
         ),
         gauge,
-        html.H4("Timeline:", style={"text-align": "center", "padding-top": "8vh"}),
+        html.H4("Timeline:", style={"text-align": "center", "padding-top": "4vh"}),
         dcc.Graph(
             id="example-graph",
             figure=fig,
@@ -192,6 +192,7 @@ def update_metrics(n=0):
     SCORE1 = df["team1_score"].iloc[-1]
     SCORE2 = df["team2_score"].iloc[-1]
     children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵"
+
 
     if ODDS1 >= ODDS2 and ODDS1 > ODDS_DRAW:
         chance = 33 - (ODDS1 - 34) / 2

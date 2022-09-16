@@ -1,10 +1,11 @@
 import datetime
-from glob import glob
 
 ERRORS = 0
-MAX_ERRORS = 8
+MAX_ERRORS = 4 
 FIRST_HALF = False
 SECOND_HALF = False
+
+
 
 def _assert_data(data):
     # Check if scraped values are correct

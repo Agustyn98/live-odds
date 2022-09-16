@@ -29,7 +29,7 @@ def get_bet365():
     sleep(3)
     delete_sign_in_msg()
 
-    for i, _ in enumerate(range(INTERVAL)):
+    for _ in range(INTERVAL):
         # Find all boxes that contain a match info
         driver.refresh()
         sleep(5)
@@ -39,6 +39,7 @@ def get_bet365():
                 print(f"Extracted data:\n{e.text}")
 
                 raw_data = e.text.strip().split("\n")
+
                 if not assert_data(raw_data):
                     sleep(TIME_WINDOW)
                     break
