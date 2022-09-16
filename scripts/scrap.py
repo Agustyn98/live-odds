@@ -26,7 +26,7 @@ def delete_sign_in_msg():
 
 def get_bet365():
 
-    sleep(3)
+    sleep(5)
     delete_sign_in_msg()
 
     for _ in range(INTERVAL):

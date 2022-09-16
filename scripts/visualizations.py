@@ -18,10 +18,13 @@ app = Dash(
     external_stylesheets=[dbc.themes.DARKLY],
 )
 
-cache = Cache(app.server, config={
-    'CACHE_TYPE': 'filesystem',
-    'CACHE_DIR': 'cache-directory',
-})
+cache = Cache(
+    app.server,
+    config={
+        "CACHE_TYPE": "filesystem",
+        "CACHE_DIR": "cache-directory",
+    },
+)
 
 TIMEOUT = 68
 
@@ -32,41 +35,22 @@ os.environ["GCLOUD_PROJECT"] = project_id
 
 client = bigquery.Client()
 
-yesterday = (datetime.now() - timedelta(1)).strftime("%Y%m%d")
+#yesterday = (datetime.now() - timedelta(1)).strftime("%Y%m%d")
+
 sql = f"""
-    SELECT team1, team2, time, team1_score, team2_score, team1_odds, draw_odds, team2_odds FROM
-    (
-    SELECT team1, team2,
-    time,
-    ROW_NUMBER() OVER(partition by time) as r, 
-    team1_score, team2_score,
-    team1_odds * 100 / total as team1_odds, 
-    draw_odds * 100 / total as draw_odds, 
-    team2_odds * 100 / total as team2_odds,
-    FROM (
-      SELECT team1, team2, time, team1_score, team2_score,
-      (1 / team1_odds  ) as team1_odds,
-      (1 / draw_odds )  as draw_odds,
-      (1 / team2_odds  )  as team2_odds,
-      (1 / team1_odds + 1 / draw_odds + 1 / team2_odds) as total,
-      datetime
-      FROM `marine-bison-360321.betting_dataset.match_bets2`
-      WHERE 
-      LOWER(team1) LIKE "%{TEAM1}%"
-      AND LOWER(team2) LIKE "%{TEAM2}%"
-      AND datetime >= {yesterday}
-      )
-    ) 
-    WHERE r = 1 
-    ORDER BY time
-"""
+    SELECT * FROM `marine-bison-360321.betting_dataset.view_formatted`
+    WHERE
+    LOWER(team1) LIKE "%{TEAM1}%"
+    AND LOWER(team2) LIKE "%{TEAM2}%"
+    """
 
 templates = ["darkly"]
 load_figure_template(templates)
 
+
 @cache.memoize(timeout=TIMEOUT)
 def get_data():
-    print('RUNNING EXPENSIVE QUERY !\n')
+    print("RUNNING EXPENSIVE QUERY !\n")
     df = client.query(sql, project=project_id).to_dataframe()
     i = 0
     while len(df) <= 0:
@@ -79,8 +63,9 @@ def get_data():
 
     return df
 
-df = pd.read_csv("../../data.csv")
-#df = get_data()
+
+# df = pd.read_csv("../../data.csv")
+df = get_data()
 print(df)
 
 TEAM1 = df["team1"].iloc[-1]
@@ -162,9 +147,8 @@ app.layout = html.Div(
     Input("interval-component", "n_intervals"),
 )
 def update_metrics(n=0):
-    df = pd.read_csv("../../data.csv")
-    #df = get_data()
-    print(f'DATA:\n{df}')
+    # df = pd.read_csv("../../data.csv")
+    df = get_data()
     TEAM1 = df["team1"].iloc[-1]
     TEAM2 = df["team2"].iloc[-1]
     ODDS1 = df["team1_odds"].iloc[-1]
@@ -192,7 +176,6 @@ def update_metrics(n=0):
     SCORE1 = df["team1_score"].iloc[-1]
     SCORE2 = df["team2_score"].iloc[-1]
     children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵"
-
 
     if ODDS1 >= ODDS2 and ODDS1 > ODDS_DRAW:
         chance = 33 - (ODDS1 - 34) / 2
