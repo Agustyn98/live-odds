@@ -25,4 +25,5 @@ The goal of this project is to show live prediction based on betting odds from t
     - Scaling: Distributed computing and a queque in case I push thousands of record per second
 3. A BigQuery suscription consumes the data
     - Data is stored in a table partitioned by date
-4. Live plotting using python and the library plotly deployed in Compute Engine queries tables from BigQuery
+4. A transformation is done in SQL, transforming betting odds into probability, and storing the results in a view
+5. Live plotting using python and the library plotly deployed in Compute Engine queries the view from BigQuery
