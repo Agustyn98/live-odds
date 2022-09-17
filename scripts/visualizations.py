@@ -1,12 +1,10 @@
 from time import sleep
-from tkinter.ttk import Style
 from dash import Dash, html, dcc
 import plotly.express as px
 import dash_daq as daq
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
-import pandas as pd
 from google.cloud import bigquery
 import os
 from flask_caching import Cache
