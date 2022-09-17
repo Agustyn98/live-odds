@@ -28,7 +28,6 @@ def publish(record):
         # Encode the data
         if encoding == Encoding.JSON:
             data_str = json.dumps(record)
-            print(f"Preparing a JSON-encoded message:\n{data_str}")
             data = data_str.encode("utf-8")
         else:
             print(f"No encoding specified in {topic_path}. Abort.")
