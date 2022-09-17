@@ -1,11 +1,11 @@
 from time import sleep
+from tkinter.ttk import Style
 from dash import Dash, html, dcc
 import plotly.express as px
 import dash_daq as daq
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 from dash_bootstrap_templates import load_figure_template
-from datetime import datetime, timedelta
 import pandas as pd
 from google.cloud import bigquery
 import os
@@ -26,7 +26,7 @@ cache = Cache(
     },
 )
 
-TIMEOUT = 68
+TIMEOUT = 968
 
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
@@ -34,8 +34,6 @@ project_id = "marine-bison-360321"
 os.environ["GCLOUD_PROJECT"] = project_id
 
 client = bigquery.Client()
-
-#yesterday = (datetime.now() - timedelta(1)).strftime("%Y%m%d")
 
 sql = f"""
     SELECT * FROM `marine-bison-360321.betting_dataset.view_formatted`
@@ -98,8 +96,7 @@ gauge = daq.Gauge(
         "ranges": {"tomato": [0, 32], "white": [32, 68], "lightskyblue": [68, 100]},
     },
     value=ODDS1,
-    label="",
-    labelPosition="bottom",
+    label="Live result forecast based on betting odds",
     size=600,
     max=100,
     min=0,
@@ -111,22 +108,18 @@ app.layout = html.Div(
         html.H1(
             id="score",
             children=f"{TEAM1} {SCORE1} - {SCORE2} {TEAM2}",
-            style={"text-align": "center", "padding-top": "1vh"},
-        ),
-        html.H3(
-            "Live result forecast based on betting odds",
-            style={"text-align": "center", "padding": "1vw", "padding-bottom": "2vh"},
-            id="descriptioin",
+            style={"text-align": "center", "padding-top": "1vh", "padding-bottom": "1vh"},
         ),
         gauge,
-        html.H4("Timeline:", style={"text-align": "center", "padding-top": "0vh"}),
+        html.H3(id="probability", children=""),
+        html.H4("Timeline:", style={"text-align": "center", "padding-top": "2vh"}),
         dcc.Graph(
             id="example-graph",
             figure=fig,
             style={
                 "text-align": "center",
-                "padding-right": "3vw",
-                "padding-left": "3vw",
+                "padding-right": "2vw",
+                "padding-left": "2vw",
                 "padding-bottom": "2vw",
             },
         ),
@@ -142,8 +135,8 @@ app.layout = html.Div(
 @app.callback(
     Output("example-graph", "figure"),
     Output("gauge", "value"),
-    Output("gauge", "label"),
     Output("score", "children"),
+    Output("probability", "children"),
     Input("interval-component", "n_intervals"),
 )
 def update_metrics(n=0):
@@ -154,7 +147,6 @@ def update_metrics(n=0):
     ODDS1 = df["team1_odds"].iloc[-1]
     ODDS_DRAW = df["draw_odds"].iloc[-1]
     ODDS2 = df["team2_odds"].iloc[-1]
-    # print(df.to_string())
 
     fig = px.bar(
         df,
@@ -175,19 +167,26 @@ def update_metrics(n=0):
 
     SCORE1 = df["team1_score"].iloc[-1]
     SCORE2 = df["team2_score"].iloc[-1]
-    children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵"
+    children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵" 
 
     if ODDS1 >= ODDS2 and ODDS1 > ODDS_DRAW:
         chance = 33 - (ODDS1 - 34) / 2
-        label_text = f"{TEAM1} Wins"
     elif ODDS2 > ODDS_DRAW:
         chance = 67 + (ODDS2 - 34) / 2
-        label_text = f"{TEAM2} Wins"
     else:
         chance = 50 + (ODDS2 / 3 - ODDS1 / 3) * 1.2
-        label_text = f"Toss-up/Draw"
+    
+    probability = html.Div([html.Span(f'{TEAM1} {ODDS1:.1f}', style={'color': 'tomato'}),
+       html.Span(f'Draw {ODDS_DRAW:.1f} ', style={'color': 'palegreen', 'padding-left': '2vh', 'padding-right': '2vh'}), 
+       html.Span(f'{TEAM2} {ODDS2:.1f}', style={'color': 'lightskyblue'}), 
+    ], style={'display': 'flex', 'justify-content': 'center'})
 
-    return fig, chance, label_text, children
+    return (
+        fig,
+        chance,
+        children,
+        probability,
+    )
 
 
 if __name__ == "__main__":
