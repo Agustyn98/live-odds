@@ -26,7 +26,7 @@ cache = Cache(
     },
 )
 
-TIMEOUT = 968
+TIMEOUT = 48
 
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
@@ -108,7 +108,11 @@ app.layout = html.Div(
         html.H1(
             id="score",
             children=f"{TEAM1} {SCORE1} - {SCORE2} {TEAM2}",
-            style={"text-align": "center", "padding-top": "1vh", "padding-bottom": "1vh"},
+            style={
+                "text-align": "center",
+                "padding-top": "1vh",
+                "padding-bottom": "1vh",
+            },
         ),
         gauge,
         html.H3(id="probability", children=""),
@@ -125,7 +129,7 @@ app.layout = html.Div(
         ),
         dcc.Interval(
             id="interval-component",
-            interval=70 * 1000,
+            interval=50 * 1000,
             n_intervals=0,
         ),
     ]
@@ -167,19 +171,73 @@ def update_metrics(n=0):
 
     SCORE1 = df["team1_score"].iloc[-1]
     SCORE2 = df["team2_score"].iloc[-1]
-    children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵" 
+    children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵"
 
     if ODDS1 >= ODDS2 and ODDS1 > ODDS_DRAW:
         chance = 33 - (ODDS1 - 34) / 2
+        probability = html.Div(
+            [
+                html.Span(
+                    f"{TEAM1} {ODDS1:.1f}",
+                    style={"color": "tomato", "font-weight": "bold", "text-decoration": "underline"},
+                ),
+                html.Span(
+                    f"Draw {ODDS_DRAW:.1f} ",
+                    style={
+                        "color": "palegreen",
+                        "padding-left": "2vh",
+                        "padding-right": "2vh",
+                    },
+                ),
+                html.Span(f"{TEAM2} {ODDS2:.1f}", style={"color": "lightskyblue"}),
+            ],
+            style={"display": "flex", "justify-content": "center"},
+        )
     elif ODDS2 > ODDS_DRAW:
+        probability = html.Div(
+            [
+                html.Span(f"{TEAM1} {ODDS1:.1f}", style={"color": "tomato"}),
+                html.Span(
+                    f"Draw {ODDS_DRAW:.1f} ",
+                    style={
+                        "color": "palegreen",
+                        "padding-left": "2vh",
+                        "padding-right": "2vh",
+                    },
+                ),
+                html.Span(
+                    f"{TEAM2} {ODDS2:.1f}",
+                    style={"color": "lightskyblue", "font-weight": "bold", "text-decoration": "underline"},
+                ),
+            ],
+            style={"display": "flex", "justify-content": "center"},
+        )
         chance = 67 + (ODDS2 - 34) / 2
     else:
+        probability = html.Div(
+            [
+                html.Span(f"{TEAM1} {ODDS1:.1f}", style={"color": "tomato"}),
+                html.Span(
+                    f"Draw {ODDS_DRAW:.1f} ",
+                    style={
+                        "color": "palegreen",
+                        "font-weight": "bold",
+                        "padding-left": "2vh",
+                        "padding-right": "2vh",
+                        "font-weight": "bold",
+                        "text-decoration": "underline"
+                    },
+                ),
+                html.Span(f"{TEAM2} {ODDS2:.1f}", style={"color": "lightskyblue"}),
+            ],
+            style={"display": "flex", "justify-content": "center"},
+        )
         chance = 50 + (ODDS2 / 3 - ODDS1 / 3) * 1.2
-    
-    probability = html.Div([html.Span(f'{TEAM1} {ODDS1:.1f}', style={'color': 'tomato'}),
-       html.Span(f'Draw {ODDS_DRAW:.1f} ', style={'color': 'palegreen', 'padding-left': '2vh', 'padding-right': '2vh'}), 
-       html.Span(f'{TEAM2} {ODDS2:.1f}', style={'color': 'lightskyblue'}), 
-    ], style={'display': 'flex', 'justify-content': 'center'})
+
+    # probability = html.Div([html.Span(f'{TEAM1} {ODDS1:.1f}', style={'color': 'tomato'}),
+    #   html.Span(f'Draw {ODDS_DRAW:.1f} ', style={'color': 'palegreen', 'padding-left': '2vh', 'padding-right': '2vh'}),
+    #   html.Span(f'{TEAM2} {ODDS2:.1f}', style={'color': 'lightskyblue', 'font-weight': 'bold'}),
+    # ], style={'display': 'flex', 'justify-content': 'center'})
 
     return (
         fig,

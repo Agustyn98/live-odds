@@ -8,8 +8,8 @@ import os
 TEAM1 = os.environ["TEAM1"]
 TEAM2 = os.environ["TEAM2"]
 
-TIME_WINDOW = 82  # Seconds
-INTERVAL = int(7200 / TIME_WINDOW)
+TIME_WINDOW = 80  # Seconds
+INTERVAL = int(9000 / TIME_WINDOW)
 driver = uc.Chrome()
 
 link = "https://www.bet365.com/#/IP/B1"
@@ -33,7 +33,8 @@ def get_bet365():
         # Find all boxes that contain a match info
         driver.refresh()
         sleep(5)
-        driver.execute_script("window.scrollTo(0, 200)") 
+        driver.execute_script("document.body.style.zoom = '0.5'")
+        sleep(2)
         match_rectangle = driver.find_elements(By.CLASS_NAME, "ovm-Fixture_Container")
         for e in match_rectangle:
             if TEAM1.lower() in e.text.lower() and TEAM2.lower() in e.text.lower():
