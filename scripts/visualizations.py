@@ -171,7 +171,7 @@ def update_metrics(n=0):
     SCORE2 = df["team2_score"].iloc[-1]
     children = f"🔴 {TEAM1} {SCORE1} - {SCORE2} {TEAM2} 🔵"
 
-    if ODDS1 >= ODDS2 and ODDS1 > ODDS_DRAW:
+    if ODDS1 > ODDS2 and ODDS1 > ODDS_DRAW:
         chance = 33 - (ODDS1 - 34) / 2
         probability = html.Div(
             [
@@ -191,7 +191,7 @@ def update_metrics(n=0):
             ],
             style={"display": "flex", "justify-content": "center"},
         )
-    elif ODDS2 > ODDS_DRAW:
+    elif ODDS2 > ODDS_DRAW and ODDS2 > ODDS1:
         probability = html.Div(
             [
                 html.Span(f"{TEAM1} {ODDS1:.1f}", style={"color": "tomato"}),
