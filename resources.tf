@@ -127,12 +127,12 @@ resource "google_pubsub_topic" "topic1" {
 
 
 # Pubsub push to BigQuery suscription
-resource "google_pubsub_subscription" "example" {
-  name  = "example-subscription"
-  topic = google_pubsub_topic.example.name
+resource "google_pubsub_subscription" "bqsub" {
+  name  = "bqsub"
+  topic = google_pubsub_topic.topic1.name
 
   bigquery_config {
-    table = google_bigquery_table.default.tablle_id
+    table = google_bigquery_table.default.table_id
   }
 
 }
