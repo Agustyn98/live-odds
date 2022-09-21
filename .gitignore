@@ -7,3 +7,5 @@ etc/
 share/
 orchestrate.py
 cache-directory
+.terraform*
+terraform*
