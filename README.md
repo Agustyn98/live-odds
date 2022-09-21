@@ -38,8 +38,13 @@ pip install -r requirements.txt
 ```
 
 2. Create the cloud resources 
-
-...
+Change the project name, authenticate and run
+```
+terraform init
+```
+```
+terraform apply
+```
 
 3. Set the enviromental variables with the team names
 ```
