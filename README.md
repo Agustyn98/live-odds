@@ -8,11 +8,12 @@ Show real-time predictions of football matches based on betting data
 The goal of this project is to create a live win probability based on betting odds from the internet, as well as to show its change over time as the game progresses.
 
 
-## Results:
+## Results (sped-up):
 
 ![scotlland-ukraine](https://user-images.githubusercontent.com/66125885/191607369-4d0ac535-c1a8-456a-bc71-68b9663c0fdf.gif)
 
 ![monza-juve-300s](https://user-images.githubusercontent.com/66125885/191607379-76db6946-6319-4b04-b796-34011de525a6.gif)
+
 
 
 ## Pipeline
