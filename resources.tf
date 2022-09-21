@@ -65,7 +65,7 @@ resource "google_bigquery_table" "default" {
   EOF
 }
 
-# Schema for the pubsub topic, required
+# Schema for the pubsub topic, not working right now
 resource "google_pubsub_schema" "my_schema" {
   name = "betting_schema"
   type = "AVRO"
