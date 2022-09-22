@@ -20,7 +20,7 @@ The goal of this project is to create a live win probability based on betting od
 
 ![download](https://user-images.githubusercontent.com/66125885/190826735-e5c9c31b-4aaa-4a1e-b01f-772d4b759c4c.jpeg)
 
-1. Match data is scraped with selenium, using the [undetected  chromedriver]("https://github.com/ultrafunkamsterdam/undetected-chromedriver") to avoid CloudFlare's restrictions
+1. Match data is scraped with selenium, using the [undetected  chromedriver](https://github.com/ultrafunkamsterdam/undetected-chromedriver) to avoid CloudFlare's restrictions
 2. Data is pushed to a pub/sub topic, this has a few advantages:
     - Decoupling: Avoid writing a connector for earch sink, ability to replay the data.
     - Scaling: Distributed computing and a queque in case I push thousands of record per second
